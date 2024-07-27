@@ -30,7 +30,7 @@ jobs:
           git config --global user.email "git@qrgamestudio.com" &&
           git config --global user.name "QR Bot" &&
           cd web-qrgamestudio-com/src/lib/ &&
-          git diff --exit-code || { echo "Nothing to do"; exit 0 } &&
           git add manifest.json &&
+          [ -n "$(git status --porcelain)" ] || exit 0 &&
           git commit -m "chore: automatic manifest update" &&
           git push
