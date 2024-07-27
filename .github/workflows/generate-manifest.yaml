@@ -1,0 +1,31 @@
+name: generate-manifest
+on:
+  push:
+    branches:
+      - 'master'
+      - 'main'
+      - 'prod'
+
+jobs:
+  deploy-prod:
+    runs-on: ubuntu-latest
+    env:
+      REPO_DEPLOY_SSH_KEY: ${{ secrets.REPO_DEPLOY_SSH_KEY }}
+    steps:
+      - run: mkdir src
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 100
+          path: 'src'
+      - name: run deploy
+        shell: bash
+        run: |
+          eval `ssh-agent -s`
+          echo "$REPO_DEPLOY_SSH_KEY" | tr -d '\r' | ssh-add - &&
+          cd src &&
+          python3 generate-manifest.py &&
+          git config --global user.email "git@qrgamestudio.com" &&
+          git config --global user.name "QR Bot" &&
+          git add manifest.json README.md &&
+          git commit -m "chore: automatic manifest update" &&
+          git push
