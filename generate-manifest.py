@@ -12,7 +12,7 @@ def load_game_manifest(dir_game: Path) -> dict:
     except StopIteration:
         return {}
     data = json.loads(file_manifest.read_text())
-    url = "https://qrpr.eu/html.html#"
+    url = "https://qgo.eu/GAME/#"
     data["url"] = f"{url}{compiled_content}"
     return {data["id"]: data}
 
