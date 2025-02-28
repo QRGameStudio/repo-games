@@ -11,9 +11,20 @@ def load_game_manifest(dir_game: Path) -> dict:
         compiled_content = next(dir_game.glob("*.compiled.txt")).read_text().strip()
     except StopIteration:
         return {}
+
+    try:
+        file_qr = next(dir_game.glob("*.svg"))
+    except StopIteration:
+        file_qr = None
+
     data = json.loads(file_manifest.read_text())
-    url = "https://qgo.eu/GAME/#"
-    data["url"] = f"{url}{compiled_content}"
+    if file_qr:
+        data["url"] = f"https://qgo.eu/GAME/#{compiled_content}"
+        data["qr"] = True
+    else:
+        game_id = data["id"]
+        data["url"] = f"https://qrpr.eu/html#RD{game_id}"
+        data["qr"] = False
     return {data["id"]: data}
 
 
